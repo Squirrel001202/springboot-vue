@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CourseMapper">
+
+    <!--分页查询-->
+    <select id="findPage" resultType="com.example.model.Course">
+        select course.*,sys_user.nickname as teacher from sys_user right join course on sys_user.id = course.teacher_id
+        <where>
+            <if test="name != null and name != ''">
+                and course.name like concat('%',#{name},'%')
+            </if>
+        </where>
+        limit #{pageNum},#{pageSize}
+    </select>
+
+    <!--查询总记录条数-->
+    <select id="findTotal" resultType="int">
+        select count(*) from course
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--根据id删除-->
+    <delete id="removeById">
+        delete from course where id = #{id}
+    </delete>
+
+    <!--根据id批量删除-->
+    <delete id="removeByIds" parameterType="list">
+        delete from course where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--查询所有-->
+    <select id="findAll" resultType="com.example.model.Course">
+        select * from course
+    </select>
+
+    <!--新增-->
+    <insert id="insert" parameterType="com.example.model.Course">
+        insert into course (name,score,times,state,teacher_id)
+        values (#{name},#{score},#{times},#{state},#{teacherId})
+    </insert>
+
+    <!--动态sql修改信息-->
+    <update id="update" parameterType="com.example.model.Course">
+        update course
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="score != null">
+                score = #{score},
+            </if>
+            <if test="times != null">
+                times = #{times},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="teacherId != null">
+                teacher_id = #{teacherId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--根据teacherId查找teacher-->
+    <select id="getTeacherById" resultType="map">
+        select course.*,sys_user.nickname from sys_user join right course on sys_user.id = course.teacher_id
+    </select>
+
+    <delete id="deleteStudentCourse" >
+        delete from student_course where student_id = #{studentId} and course_id = #{courseId}
+    </delete>
+
+    <insert id="setStudentCourse">
+        insert into student_course(student_id,course_id) values (#{studentId},#{courseId})
+    </insert>
+</mapper>

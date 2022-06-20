@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.FilesMapper">
+    <insert id="insert" parameterType="com.example.model.Files">
+        insert into sys_file (name,type,size,url,md5) values (#{name},#{type},#{size},#{url},#{md5})
+    </insert>
+
+    <select id="getByMd5" parameterType="string" resultType="com.example.model.Files">
+        select * from sys_file where md5 = #{md5}
+    </select>
+
+    <!--查询所有数据并分页显示-->
+    <select id="selectPage" resultType="com.example.model.Files">
+        select *
+        from sys_file
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+        order by id desc
+        limit #{pageNum},#{pageSize}
+    </select>
+
+    <!--查询总记录条数-->
+    <select id="selectTotal" resultType="int">
+        select count(*) from sys_file
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--根据id查询-->
+    <select id="selectById" resultType="com.example.model.Files">
+        select * from sys_file where id = #{id}
+    </select>
+
+    <!--根据id查询多个-->
+    <select id="selectByIds" resultType="com.example.model.Files" parameterType="list">
+        select * from sys_file where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <!--根据id删除-->
+    <delete id="deleteById" parameterType="int">
+        delete from sys_file where id = #{id}
+    </delete>
+
+    <delete id="deleteBatch" parameterType="list">
+        DELETE FROM sys_file WHERE id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--动态sql修改-->
+    <update id="updateById" parameterType="com.example.model.Files">
+        update sys_file
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="type != null and type != ''">
+                type = #{type},
+            </if>
+            <if test="size != null and size != ''">
+                size = #{size},
+            </if>
+            <if test="url != null and url != ''">
+                url = #{url},
+            </if>
+            <if test="isDelete != null and isDelete != ''">
+                is_delete = #{isDelete},
+            </if>
+            <if test="enable != null and enable != ''">
+                enable = #{enable},
+            </if>
+            <if test="md5 != null and md5 != ''">
+                md5 = #{md5},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

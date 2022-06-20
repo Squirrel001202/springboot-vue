@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.MenuMapper">
+    <!--查询全部-->
+    <select id="findAll" resultType="com.example.model.Menu">
+        select * from sys_menu
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--插入信息-->
+    <insert id="insert" parameterType="com.example.model.Menu">
+        insert into sys_menu (name,path,icon,description,pid,page_path,sort_num)
+         values (#{name},#{path},#{icon},#{description},#{pid},#{pagePath},#{sortNum})
+    </insert>
+
+    <!--动态Sql修改信息-->
+    <update id="update" parameterType="com.example.model.Menu">
+        update sys_menu
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="path != null and path != ''">
+                path = #{path},
+            </if>
+            <if test="icon != null and icon != ''">
+                icon = #{icon},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="pid != null and pid != ''">
+                pid = #{pid},
+            </if>
+            <if test="pagePath != null and pagePath != ''">
+                page_path = #{pagePath},
+            </if>
+            <if test="sortNum != null and sortNum != ''">
+                sort_num = #{sortNum},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--根据id删除-->
+    <delete id="removeById">
+        delete from sys_menu where id = #{id}
+    </delete>
+
+    <!--根据id批量删除-->
+    <delete id="removeByIds" parameterType="list">
+        delete from sys_menu where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getById" resultType="com.example.model.Menu">
+        select * from sys_menu where id = #{id}
+    </select>
+</mapper>

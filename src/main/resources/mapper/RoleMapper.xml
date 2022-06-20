@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.RoleMapper">
+    <!--分页查询-->
+    <select id="findPage" resultType="com.example.model.Role">
+        select * from sys_role
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+        order by id desc
+        limit #{pageNum},#{pageSize}
+    </select>
+
+    <!--查询总记录条数-->
+    <select id="findTotal" resultType="int">
+        select count(*) from sys_role
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--插入信息-->
+    <insert id="insert" parameterType="com.example.model.Role">
+        insert into sys_role (name,description,flag) values (#{name},#{description},#{flag})
+    </insert>
+
+    <!--动态Sql修改信息-->
+    <update id="update" parameterType="com.example.model.Role">
+        update sys_role
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="flag != null and flag != ''">
+                flag = #{flag},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--根据id删除-->
+    <delete id="removeById">
+        delete from sys_role where id = #{id}
+    </delete>
+
+    <!--根据id批量删除-->
+    <delete id="removeByIds" parameterType="list">
+        delete from sys_role where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--查询全部-->
+    <select id="findAll" resultType="com.example.model.Role">
+        select * from sys_role
+    </select>
+
+    <!--根据flag查询-->
+    <select id="getByFlag" resultType="int">
+        select id from sys_role where flag = #{flag}
+    </select>
+</mapper>

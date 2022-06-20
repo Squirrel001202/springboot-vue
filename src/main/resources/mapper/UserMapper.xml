@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.UserMapper">
+
+    <resultMap id="pageUser" type="com.example.model.User">
+        <result column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="nickname" property="nickname" />
+        <result column="email" property="email" />
+        <result column="phone" property="phone" />
+        <result column="address" property="address" />
+        <result column="create_time" property="createTime" />
+        <result column="role" property="role" />
+        <collection property="courses" javaType="java.util.ArrayList" ofType="com.example.model.Course">
+            <result column="teacherCourseName" property="name" />
+            <result column="teacherScore" property="score" />
+        </collection>
+        <collection property="stuCourses" javaType="java.util.ArrayList" ofType="com.example.model.Course">
+            <result column="stuCourseName" property="name" />
+            <result column="stuScore" property="score" />
+        </collection>
+    </resultMap>
+
+    <!--查询所有用户信息-->
+    <select id="selectAll" resultType="com.example.model.User">
+        select *
+        from sys_user
+    </select>
+
+    <!--插入用户信息-->
+    <insert id="insert" parameterType="com.example.model.User">
+        insert into sys_user (username,password,nickname,email,phone,address,role) values (#{username},#{password},#{nickname},#{email},#{phone},#{address},#{role})
+    </insert>
+
+    <!--动态Sql修改用户信息-->
+    <update id="update" parameterType="com.example.model.User">
+        update sys_user
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="address != null">
+            address = #{address},
+            </if>
+            <if test="role != null">
+                role = #{role},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from sys_user where id = #{id}
+    </delete>
+
+    <!--查询所有数据并分页显示-->
+    <select id="selectPage" resultMap="pageUser">
+        select sys_user.*, sc.name as stuCourseName, tc.name as teacherCourseName, tc.score as teacherScore,
+        sc.score as stuScore from sys_user
+        left join student_course
+        on sys_user.id = student_course.student_id
+        left join course sc
+        on student_course.course_id = sc.id
+        left join course tc
+        on sys_user.id = tc.teacher_id
+        <where>
+            <if test="username != null and username != ''">
+                and sys_user.username like concat('%', #{username} ,'%')
+            </if>
+            <if test="email != null and email != ''">
+                and sys_user.email like concat('%', #{email} ,'%')
+            </if>
+            <if test="address != null and address != ''">
+                and sys_user.address like concat('%', #{address} ,'%')
+            </if>
+        </where>
+        order by sys_user.id desc
+        limit #{pageNum},#{pageSize}
+    </select>
+
+    <!--查询总记录条数-->
+    <select id="selectTotal" resultType="int">
+        select count(*) from sys_user
+        <where>
+            <if test="username != null and username != ''">
+                and username like concat('%',#{username},'%')
+            </if>
+            <if test="email != null and email != ''">
+                and email like concat('%',#{email},'%')
+            </if>
+            <if test="address != null and address != ''">
+                and address like concat('%',#{address},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--批量删除-->
+    <delete id="deleteBatch" parameterType="list">
+        DELETE FROM sys_user WHERE id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--批量插入-->
+    <insert id="insertBatch">
+        INSERT INTO sys_user (username, password, nickname, email, phone,address,avatar_url) VALUES
+        <foreach collection="list" separator="," item="item">
+            (#{item.username},#{item.password},#{item.nickname},#{item.email},#{item.phone},#{item.address},#{item.avatarUrl})
+        </foreach>
+    </insert>
+
+    <!--登录查询-->
+    <select id="login" parameterType="com.example.controller.dto.UserDTO" resultType="com.example.controller.dto.UserDTO">
+        select id,username,password,nickname,role from sys_user where username = #{username} and password = #{password}
+    </select>
+
+    <!--注册查询-->
+    <select id="register" parameterType="com.example.controller.dto.UserDTO" resultType="com.example.controller.dto.UserDTO">
+        select username from sys_user where username = #{username}
+    </select>
+
+    <!--查询某一用户个人信息-->
+    <select id="getPerson" resultType="com.example.model.User" parameterType="string">
+        select *
+        from sys_user
+        where username = #{username}
+    </select>
+
+    <select id="getById" resultType="com.example.model.User">
+        select *
+        from sys_user
+        where id = #{id}
+    </select>
+
+    <!--修改密码-->
+    <update id="updatePassword" parameterType="com.example.controller.dto.UserPasswordDTO">
+        update sys_user set password = #{newPassword} where username = #{username} and password = #{password}
+    </update>
+
+    <!--根据角色查询-->
+    <select id="selectByRole" resultType="com.example.model.User">
+        select * from sys_user where role = #{role}
+    </select>
+</mapper>
