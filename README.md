@@ -1,5 +1,7 @@
 springboot+vue+mybatis等其他技术实现的学生选课后台管理系统，实现了学生选课，管理员管理用户信息，控制权限等功能
 
+前端程序地址 https://github.com/Squirrel001202/vue.git
+
 搭建java开发环境
 导入sql.sql
 在application.yml文件中配置数据库连接
