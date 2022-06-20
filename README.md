@@ -14,7 +14,5 @@ springboot+vue+mybatis等其他技术实现的学生选课后台管理系统，�
 ![image](https://user-images.githubusercontent.com/105700961/174572856-1425f366-7203-4fc5-9c85-2078fd30b6c2.png)
 ![image](https://user-images.githubusercontent.com/105700961/174572885-3c0426e7-8007-490f-bd96-d60bdbcc7c7d.png)
 ![image](https://user-images.githubusercontent.com/105700961/174572910-ca169eb4-269c-442e-a48f-83c1097ddf3e.png)
-![image](https://user-images.githubusercontent.com/105700961/174572909-54910919-c8ef-4f23-88f4-00b80694cfd0.png
 ![image](https://user-images.githubusercontent.com/105700961/174572984-fc328889-aba6-48b6-aaf8-20a896238689.png)
 ![image](https://user-images.githubusercontent.com/105700961/174573016-779386c0-bc59-48d1-a735-c24f68ccad86.png)
-
